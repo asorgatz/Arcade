@@ -32,17 +32,22 @@ function genTable (){
 let gameState = {
     apple: [0, 0],
     snake: {
-        body: [[1,1],[1,2],[1,3]],
+        body: [[1,2],[1,2],[1,4]],
         nextDirection: [0, 1]
     }
 };
 
 function tick () {
-    gameState.snake.body[gameState.snake.body.length-1]
+    let newSegment = []
+    newSegment.push(gameState.snake.body[gameState.snake.body.length-1][0]+ gameState.snake.nextDirection[0])
+    newSegment.push(gameState.snake.body[gameState.snake.body.length-1][1]+ gameState.snake.nextDirection[1])
+    gameState.snake.body.push(newSegment)
+    gameState.snake.body.shift()
+    console.log(gameState.snake.body)
 }
 
 boardButton.addEventListener('click', genTable)
-playButton.addEventListener('click', setInterval(tick),500)
+playButton.addEventListener('click', tick)
 
 
 //gameState.snake.body.pop()
