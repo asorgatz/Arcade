@@ -2,8 +2,18 @@ let table = document.getElementById('table');
 let boardButton = document.getElementById('boardButton');
 let select = document.getElementById('select');
 let playButton = document.getElementById('playButton');
-let board = [];
 
+let gameState = {
+    apple: [0, 0],
+    snake: {
+        body: [[1,1],[1,2],[1,3]],
+        nextDirection: [0, 1]
+    },
+    state: false
+};
+
+//let board = [];
+/*
 function genBoard(){
     let row =[]
     for (let j = 0; j<select.value; j++){
@@ -15,8 +25,12 @@ function genBoard(){
     console.log(board)
     
 }
+*/
 
 function genTable (){
+    while (table.children.length){
+        table.removeChild(table.children[0])
+    }
     select = document.getElementById('select');
     for (let i=0; i<select.value;i++){
         let row = document.createElement('tr')
@@ -26,53 +40,63 @@ function genTable (){
         }
         table.appendChild(row);
     }
-    genBoard()
+    console.log(table.children[0].children[0])
+    table.children[1].children[1].classList.add('snake-body')
+    table.children[1].children[2].classList.add('snake-body')
+    table.children[1].children[3].classList.add('snake-body')
+    gameState = {
+        apple: [0, 0],
+        snake: {
+            body: [[1,1],[1,2],[1,3]],
+            nextDirection: [0, 1]
+        },
+        state: false
+    };
 }
 
 
-let gameState = {
-    apple: [0, 0],
-    snake: {
-        body: [[1,1],[1,2],[1,3]],
-        nextDirection: [0, 1]
-    },
-    state: false
-};
 
 function tick () {
     if (gameState.state === true){
         let newSegment = []
         newSegment.push(gameState.snake.body[gameState.snake.body.length-1][0]+ gameState.snake.nextDirection[0])
         newSegment.push(gameState.snake.body[gameState.snake.body.length-1][1]+ gameState.snake.nextDirection[1])
-        console.log()
+        if (newSegment[0] > select.value-1 || newSegment[1] > select.value-1){
+            gameState.state = false
+            genTable()
+            alert('Lost the snake :/')
+        }
+
+        console.log(newSegment)
+        table.children[newSegment[0]].children[newSegment[1]].classList.toggle('snake-body')
         gameState.snake.body.push(newSegment)
-        //table[newSegment[0]][newSegment[1]].classList.toggle('snake-body')
+        table.children[gameState.snake.body[0][0]].children[gameState.snake.body[0][1]].classList.toggle('snake-body')
         gameState.snake.body.shift()
         console.log(gameState.snake.body)
+
     }
 }
 
 boardButton.addEventListener('click', genTable)
-document.addEventListener('keydown', function (event) {
+window.addEventListener('keydown', function (event) {
     //left
-    if (event.keyCode === 37){
+    if (event.key === 'ArrowLeft'){
         gameState.snake.nextDirection = [0,-1]
-        console.log('left')
     } 
     //up
-    else if (event.keyCode === 38){
+    else if (event.key === 'ArrowUp'){
         gameState.snake.nextDirection = [-1,0]
-        console.log('up')
+
     } 
     //right
-    else if (event.keyCode === 39){
+    else if (event.key === 'ArrowRight'){
         gameState.snake.nextDirection = [0,1]
-        console.log('right')
+
     }
     //down
-    else if (event.keyCode === 40){
+    else if (event.key === 'ArrowDown'){
         gameState.snake.nextDirection = [1,0]
-        console.log("down")
+ 
     }
     
 
@@ -80,7 +104,7 @@ document.addEventListener('keydown', function (event) {
 
 
 playButton.addEventListener('click', function(){
-    gameState.state = true
+    gameState.state = !gameState.state
 } )
 
-setInterval(tick, 1000)
+setInterval(tick, 500)
