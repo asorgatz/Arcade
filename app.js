@@ -13,6 +13,7 @@ function genBoard(){
         board.push(row)  
     }
     console.log(board)
+    
 }
 
 function genTable (){
@@ -32,23 +33,54 @@ function genTable (){
 let gameState = {
     apple: [0, 0],
     snake: {
-        body: [[1,2],[1,2],[1,4]],
+        body: [[1,1],[1,2],[1,3]],
         nextDirection: [0, 1]
-    }
+    },
+    state: false
 };
 
 function tick () {
-    let newSegment = []
-    newSegment.push(gameState.snake.body[gameState.snake.body.length-1][0]+ gameState.snake.nextDirection[0])
-    newSegment.push(gameState.snake.body[gameState.snake.body.length-1][1]+ gameState.snake.nextDirection[1])
-    gameState.snake.body.push(newSegment)
-    gameState.snake.body.shift()
-    console.log(gameState.snake.body)
+    if (gameState.state === true){
+        let newSegment = []
+        newSegment.push(gameState.snake.body[gameState.snake.body.length-1][0]+ gameState.snake.nextDirection[0])
+        newSegment.push(gameState.snake.body[gameState.snake.body.length-1][1]+ gameState.snake.nextDirection[1])
+        console.log()
+        gameState.snake.body.push(newSegment)
+        //table[newSegment[0]][newSegment[1]].classList.toggle('snake-body')
+        gameState.snake.body.shift()
+        console.log(gameState.snake.body)
+    }
 }
 
 boardButton.addEventListener('click', genTable)
-playButton.addEventListener('click', tick)
+document.addEventListener('keydown', function (event) {
+    //left
+    if (event.keyCode === 37){
+        gameState.snake.nextDirection = [0,-1]
+        console.log('left')
+    } 
+    //up
+    else if (event.keyCode === 38){
+        gameState.snake.nextDirection = [-1,0]
+        console.log('up')
+    } 
+    //right
+    else if (event.keyCode === 39){
+        gameState.snake.nextDirection = [0,1]
+        console.log('right')
+    }
+    //down
+    else if (event.keyCode === 40){
+        gameState.snake.nextDirection = [1,0]
+        console.log("down")
+    }
+    
+
+})
 
 
-//gameState.snake.body.pop()
-//gameState.snake.body.unshift()
+playButton.addEventListener('click', function(){
+    gameState.state = true
+} )
+
+setInterval(tick, 1000)
