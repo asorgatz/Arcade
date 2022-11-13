@@ -12,7 +12,17 @@ let gameState = {
         nextDirection: [0, 1]
     },
     state: false,
+    collision: false
 };
+
+function dupeCheck (arr){
+    for (let i = 0 ; i<arr.length-1;i++){
+        //console.log('comparing:'+[arr[arr.length-1][0],arr[arr.length-1][1]]+)
+        if(arr[arr.length-1][0]===arr[i][0] && arr[arr.length-1][1]===arr[i][1]){
+            gameState.collision = true
+        }
+    }
+}
 
 //let board = [];
 /*
@@ -48,7 +58,8 @@ function genTable (){
             body: [[1,1],[1,2],[1,3]],
             nextDirection: [0, 1]
         },
-        state: false
+        state: false,
+        collision: false
     };
     table.children[1].children[1].classList.add('snake-body')
     table.children[1].children[2].classList.add('snake-body')
@@ -66,17 +77,15 @@ function genApple (){
 
 function tick () {
     if (gameState.state === true){
+        dupeCheck(gameState.snake.body)
         let newSegment = []
         
         newSegment.push(gameState.snake.body[gameState.snake.body.length-1][0]+ gameState.snake.nextDirection[0])
         newSegment.push(gameState.snake.body[gameState.snake.body.length-1][1]+ gameState.snake.nextDirection[1])
-        console.log(gameState.snake.body)
-        console.log(newSegment)
-        console.log(gameState.snake.body.includes([newSegment[0],newSegment[1]]))
-    
-        if (newSegment[0] > select.value-1 || newSegment[1] > select.value-1|| newSegment[0]<0 || newSegment[1]<0||gameState.snake.body.includes([newSegment[0],newSegment[1]]) ){
+        if (newSegment[0] > select.value-1 || newSegment[1] > select.value-1|| newSegment[0]<0 || newSegment[1]<0|| gameState.collision === true) {
             gameState.state = false
             genTable()
+            return
         }
         table.children[newSegment[0]].children[newSegment[1]].classList.toggle('snake-body')
         gameState.snake.body.push(newSegment)
@@ -89,12 +98,13 @@ function tick () {
             scoreNum++
             scoreMessage.innerText = scoreNum
             console.log()
-
+            
         } else{
             table.children[gameState.snake.body[0][0]].children[gameState.snake.body[0][1]].classList.toggle('snake-body')
             gameState.snake.body.shift()
         }
-
+        console.log(gameState.snake.body)
+        
     }
 }
 
@@ -131,4 +141,4 @@ playButton.addEventListener('click', function(){
 
 } )
 
-setInterval(tick, 1000)
+setInterval(tick, 500)
