@@ -2,6 +2,8 @@ let table = document.getElementById('table');
 let boardButton = document.getElementById('boardButton');
 let select = document.getElementById('select');
 let playButton = document.getElementById('playButton');
+let scoreMessage =document.getElementById('score')
+let scoreNum= 0
 
 let gameState = {
     apple: [4, 4],
@@ -9,7 +11,7 @@ let gameState = {
         body: [[1,1],[1,2],[1,3]],
         nextDirection: [0, 1]
     },
-    state: false
+    state: false,
 };
 
 //let board = [];
@@ -40,11 +42,6 @@ function genTable (){
         }
         table.appendChild(row);
     }
-    table.children[1].children[1].classList.add('snake-body')
-    table.children[1].children[2].classList.add('snake-body')
-    table.children[1].children[3].classList.add('snake-body')
-    table.children[gameState.apple[0]].children[gameState.apple[1]].classList.add('apple')
-
     gameState = {
         apple: [4, 4],
         snake: {
@@ -53,6 +50,12 @@ function genTable (){
         },
         state: false
     };
+    table.children[1].children[1].classList.add('snake-body')
+    table.children[1].children[2].classList.add('snake-body')
+    table.children[1].children[3].classList.add('snake-body')
+    table.children[gameState.apple[0]].children[gameState.apple[1]].classList.add('apple')
+    playButton.innerText = 'Play'
+
 }
 
 function genApple (){
@@ -67,21 +70,25 @@ function tick () {
         
         newSegment.push(gameState.snake.body[gameState.snake.body.length-1][0]+ gameState.snake.nextDirection[0])
         newSegment.push(gameState.snake.body[gameState.snake.body.length-1][1]+ gameState.snake.nextDirection[1])
-    // alert/genTable bug, replace alert with a loss text element
+        console.log(gameState.snake.body)
+        console.log(newSegment)
+        console.log(gameState.snake.body.includes([newSegment[0],newSegment[1]]))
+    
         if (newSegment[0] > select.value-1 || newSegment[1] > select.value-1|| newSegment[0]<0 || newSegment[1]<0||gameState.snake.body.includes([newSegment[0],newSegment[1]]) ){
             gameState.state = false
-            alert('Lost the snake. Final Score: '+gameState.snake.body.length)
             genTable()
         }
         table.children[newSegment[0]].children[newSegment[1]].classList.toggle('snake-body')
         gameState.snake.body.push(newSegment)
         if(newSegment[0] === gameState.apple[0] && newSegment[1] === gameState.apple[1]){
-            console.log('hit apple')
             table.children[gameState.apple[0]].children[gameState.apple[1]].classList.remove('apple')
             gameState.apple = []
             genApple()
             console.log(gameState.apple)
             table.children[gameState.apple[0]].children[gameState.apple[1]].classList.add('apple')
+            scoreNum++
+            scoreMessage.innerText = scoreNum
+            console.log()
 
         } else{
             table.children[gameState.snake.body[0][0]].children[gameState.snake.body[0][1]].classList.toggle('snake-body')
@@ -119,7 +126,9 @@ window.addEventListener('keydown', function (event) {
 
 playButton.addEventListener('click', function(){
     gameState.state = !gameState.state
+    playButton.innerText= 'Pause'
+    scoreNum = 0
 
 } )
 
-setInterval(tick, 500)
+setInterval(tick, 1000)
